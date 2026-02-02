@@ -1,4 +1,5 @@
 import { Github, Twitter } from "lucide-react";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -6,10 +7,21 @@ export function Footer() {
       <div className="container mx-auto max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12 mb-10">
           {/* Brand Column */}
-          <div className="md:col-span-2 space-y-4">
-            <h2 className="text-3xl font-black tracking-tighter text-black uppercase">
-              AMEEN
-            </h2>
+          <div className="md:col-span-2 space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="relative w-12 h-12 bg-black rounded-xl p-2 shadow-lg flex items-center justify-center">
+                <Image
+                  src="/brand/logo.png"
+                  alt="Logo"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
+              </div>
+              <h2 className="text-3xl font-black tracking-tighter text-black uppercase">
+                AMEEN
+              </h2>
+            </div>
             <p className="text-black font-medium text-sm max-w-sm leading-relaxed">
               Crafting digital ecosystems with purpose. Building the future of
               web interactions, one pixel at a time.

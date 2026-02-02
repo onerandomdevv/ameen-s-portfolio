@@ -1,8 +1,22 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { FileText } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const ABOUT_IMAGES = ["/about/profile.png", "/about/profile-2.png"];
 
 export function AboutSection() {
+  const [currentImage, setCurrentImage] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImage((prev) => (prev + 1) % ABOUT_IMAGES.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section
       id="about"
@@ -15,12 +29,26 @@ export function AboutSection() {
             <div className="absolute -inset-4 border border-accent-lime rounded-[3rem] -rotate-3 pointer-events-none" />
             <div className="absolute inset-0 rounded-[2.5rem] overflow-hidden border border-accent-lime bg-zinc-900/50 p-4 shadow-2xl">
               <div className="h-full w-full rounded-2xl overflow-hidden relative">
-                <Image
-                  src="/about/profile.png"
-                  alt="Ameen"
-                  fill
-                  className="object-cover"
-                />
+                <AnimatePresence initial={false}>
+                  <motion.div
+                    key={currentImage}
+                    initial={{ x: "100%", scale: 1.1 }}
+                    animate={{ x: 0, scale: 1 }}
+                    exit={{ x: "-100%" }}
+                    transition={{
+                      x: { duration: 0.8, ease: "easeInOut" },
+                      scale: { duration: 6, ease: "linear" },
+                    }}
+                    className="absolute inset-0"
+                  >
+                    <Image
+                      src={ABOUT_IMAGES[currentImage]}
+                      alt="Ameen"
+                      fill
+                      className="object-cover"
+                    />
+                  </motion.div>
+                </AnimatePresence>
               </div>
             </div>
           </div>

@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_LINKS = [
@@ -21,9 +22,20 @@ export function Navbar() {
           {/* Brand/Logo */}
           <Link
             href="/"
-            className="text-xs md:text-sm font-black tracking-tighter text-text-primary uppercase z-[110]"
+            className="flex items-center gap-2 text-xs md:text-sm font-black tracking-tighter text-text-primary uppercase z-[110] group"
           >
-            onerandomdevv
+            <div className="relative w-6 h-6 md:w-7 md:h-7 bg-black rounded-lg p-1 shadow-md flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+              <Image
+                src="/brand/logo.png"
+                alt="Logo"
+                width={24}
+                height={24}
+                className="object-contain"
+              />
+            </div>
+            <span>
+              onerandom<span className="text-accent-lime">devv</span>
+            </span>
           </Link>
 
           {/* Desktop Links */}

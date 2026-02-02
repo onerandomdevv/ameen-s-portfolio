@@ -62,12 +62,12 @@ export function ContactSection() {
                       {
                         Icon: MessageCircle,
                         href: "https://wa.me",
-                        color: "hover:text-accent-lime",
+                        color: "hover:text-white",
                       },
                       {
                         Icon: Send,
                         href: "https://t.me",
-                        color: "hover:text-blue-400",
+                        color: "hover:text-white",
                       },
                     ].map((social, i) => (
                       <a
@@ -75,7 +75,7 @@ export function ContactSection() {
                         href={social.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`p-5 rounded-2xl bg-white/5 border border-white/5 text-white/20 transition-all ${social.color} hover:bg-white/10 hover:scale-110 active:scale-95`}
+                        className={`p-5 rounded-2xl bg-white/5 border border-white/5 text-accent-lime transition-all ${social.color} hover:bg-white/10 hover:scale-110 active:scale-95`}
                       >
                         <social.Icon className="w-6 h-6" />
                       </a>
@@ -87,7 +87,7 @@ export function ContactSection() {
                       {
                         Icon: Mail,
                         href: "mailto:ameen@example.com",
-                        color: "hover:text-red-400",
+                        color: "hover:text-white",
                       },
                       {
                         Icon: Github,
@@ -100,7 +100,7 @@ export function ContactSection() {
                         href={social.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`p-5 rounded-2xl bg-white/5 border border-white/5 text-white/20 transition-all ${social.color} hover:bg-white/10 hover:scale-110 active:scale-95`}
+                        className={`p-5 rounded-2xl bg-white/5 border border-white/5 text-accent-lime transition-all ${social.color} hover:bg-white/10 hover:scale-110 active:scale-95`}
                       >
                         <social.Icon className="w-6 h-6" />
                       </a>

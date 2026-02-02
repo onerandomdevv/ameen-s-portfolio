@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Github,
   Linkedin,
@@ -24,15 +25,15 @@ const HERO_IMAGES = [
 const EXPERTISE_MODULES = [
   {
     title: "SOFTWARE DEVELOPER",
-    desc: "I design and implement robust software solutions with a strong emphasis on algorithmic thinking, code quality, and long-term maintainability.",
+    desc: "Designing and implementing robust software solutions with a strong emphasis on algorithmic thinking, code quality, and long-term maintainability.",
   },
   {
     title: "FULL STACK DEVELOPER",
-    desc: "I build modern, scalable web applications with attention to both backend architecture and frontend usability.",
+    desc: "Building modern, scalable web applications with attention to both backend architecture and frontend usability.",
   },
   {
     title: "PROMPT ENGINEER",
-    desc: "I specialize in designing precise prompts and workflows that improve the reliability and usefulness of large language models.",
+    desc: "Specializing in designing precise prompts and workflows that improve the reliability and usefulness of large language models.",
   },
 ];
 
@@ -56,6 +57,19 @@ export function Hero() {
           transition={{ delay: 0.5 }}
           className="fixed left-4 lg:left-6 top-[40%] -translate-y-1/2 z-[60] py-6 lg:py-8 w-[40px] lg:w-[50px] bg-bg-glass backdrop-blur-2xl rounded-full hidden md:flex flex-col items-center gap-6 lg:gap-8 border border-border-subtle"
         >
+          <div className="flex flex-col items-center w-full gap-4 mb-2">
+            <Link href="/" className="group/logo">
+              <div className="relative w-6 h-6 transition-transform duration-300 group-hover/logo:scale-120 group-hover/logo:rotate-12">
+                <Image
+                  src="/brand/logo.png"
+                  alt="Logo"
+                  fill
+                  className="object-contain mix-blend-screen"
+                />
+              </div>
+            </Link>
+            <div className="w-6 h-px bg-border-subtle" />
+          </div>
           <Magnetic>
             <a
               href="https://github.com"
@@ -177,9 +191,19 @@ export function Hero() {
                       <FileText className="w-4 h-4" />
                       VIEW RESUME
                     </a>
-                    <span className="text-[11px] font-black text-accent-lime tracking-tight">
-                      @onerandomdevv
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <div className="relative w-4 h-4">
+                        <Image
+                          src="/brand/logo.png"
+                          alt="Logo"
+                          fill
+                          className="object-contain mix-blend-screen"
+                        />
+                      </div>
+                      <span className="text-[11px] font-black text-accent-lime tracking-tight">
+                        @onerandomdevv
+                      </span>
+                    </div>
                   </div>
                 </motion.div>
               </div>
