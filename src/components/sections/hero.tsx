@@ -14,8 +14,10 @@ import {
 import { Magnetic } from "@/components/ui/magnetic";
 import { SectionReveal } from "@/components/ui/section-reveal";
 import { GlitchText } from "@/components/ui/glitch-text";
+import { client } from "@/lib/sanity";
+import { urlFor } from "@/lib/sanity-image";
 
-const HERO_IMAGES = [
+const DEFAULT_HERO_IMAGES = [
   "/herobanner/hero-1.jpg",
   "/herobanner/hero-2.jpg",
   "/herobanner/hero-3.jpg",
@@ -38,14 +40,32 @@ const EXPERTISE_MODULES = [
 ];
 
 export function Hero() {
+  const [heroImages, setHeroImages] = useState<string[]>(DEFAULT_HERO_IMAGES);
   const [currentImage, setCurrentImage] = useState(0);
 
   useEffect(() => {
+    async function fetchHeroImages() {
+      try {
+        const settings = await client.fetch('*[_type == "settings"][0]');
+        if (settings?.heroBanners?.length > 0) {
+          const urls = settings.heroBanners.map((img: any) =>
+            urlFor(img).url(),
+          );
+          setHeroImages(urls);
+        }
+      } catch (error) {
+        console.error("Error fetching hero images:", error);
+      }
+    }
+    fetchHeroImages();
+  }, []);
+
+  useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentImage((prev) => (prev + 1) % HERO_IMAGES.length);
+      setCurrentImage((prev) => (prev + 1) % heroImages.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [heroImages.length]);
 
   return (
     <SectionReveal>
@@ -125,7 +145,7 @@ export function Hero() {
                   className="absolute inset-0"
                 >
                   <Image
-                    src={HERO_IMAGES[currentImage]}
+                    src={heroImages[currentImage]}
                     alt="Background"
                     fill
                     priority
@@ -210,7 +230,7 @@ export function Hero() {
             </div>
 
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20 md:hidden">
-              {HERO_IMAGES.map((_, i) => (
+              {heroImages.map((_, i) => (
                 <div
                   key={i}
                   className={`w-1.5 h-1.5 rounded-full transition-all ${

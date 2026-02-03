@@ -24,12 +24,12 @@ export function Navbar() {
             href="/"
             className="flex items-center gap-2 text-xs md:text-sm font-black tracking-tighter text-text-primary uppercase z-[110] group"
           >
-            <div className="relative w-6 h-6 md:w-7 md:h-7 bg-black rounded-lg p-1 shadow-md flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+            <div className="relative w-6 h-6 md:w-7 md:h-7 transition-transform duration-300 group-hover:scale-110">
               <Image
                 src="/brand/logo.png"
                 alt="Logo"
-                width={24}
-                height={24}
+                width={28}
+                height={28}
                 className="object-contain"
               />
             </div>

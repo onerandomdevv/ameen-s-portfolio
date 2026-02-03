@@ -1,11 +1,23 @@
 export interface Project {
-  id: string;
+  _id: string;
   title: string;
+  slug: {
+    current: string;
+  };
   description: string;
-  imageUrl?: string;
+  category: "projects" | "building" | "collabs" | "marketplace";
+  mainImage: any;
+  gallery?: any[];
   technologies: string[];
-  link?: string;
+  liveUrl?: string;
   githubUrl?: string;
+  verified: boolean;
+  cta?: {
+    telegram?: string;
+    whatsapp?: string;
+    email?: string;
+  };
+  content?: any[];
 }
 
 export interface Skill {

@@ -4,18 +4,39 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { FileText } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { client } from "@/lib/sanity";
+import { urlFor } from "@/lib/sanity-image";
 
-const ABOUT_IMAGES = ["/about/profile.png", "/about/profile-2.png"];
+const DEFAULT_ABOUT_IMAGES = ["/about/profile.png", "/about/profile-2.png"];
 
 export function AboutSection() {
+  const [aboutImages, setAboutImages] =
+    useState<string[]>(DEFAULT_ABOUT_IMAGES);
   const [currentImage, setCurrentImage] = useState(0);
 
   useEffect(() => {
+    async function fetchAboutImages() {
+      try {
+        const settings = await client.fetch('*[_type == "settings"][0]');
+        if (settings?.aboutImages?.length > 0) {
+          const urls = settings.aboutImages.map((img: any) =>
+            urlFor(img).url(),
+          );
+          setAboutImages(urls);
+        }
+      } catch (error) {
+        console.error("Error fetching about images:", error);
+      }
+    }
+    fetchAboutImages();
+  }, []);
+
+  useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentImage((prev) => (prev + 1) % ABOUT_IMAGES.length);
+      setCurrentImage((prev) => (prev + 1) % aboutImages.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [aboutImages.length]);
 
   return (
     <section
@@ -42,7 +63,7 @@ export function AboutSection() {
                     className="absolute inset-0"
                   >
                     <Image
-                      src={ABOUT_IMAGES[currentImage]}
+                      src={aboutImages[currentImage]}
                       alt="Ameen"
                       fill
                       className="object-cover"

@@ -1,38 +1,66 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
-import { CheckCircle2, Star, Mail, Bookmark, ArrowRight } from "lucide-react";
+import {
+  CheckCircle2,
+  Star,
+  MessageSquare,
+  Bookmark,
+  ArrowRight,
+  Github,
+  Globe,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GlitchText } from "@/components/ui/glitch-text";
 import { Magnetic } from "@/components/ui/magnetic";
 import { SectionReveal } from "@/components/ui/section-reveal";
-
-const PROJECTS_MOCK: {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  rating: string;
-  earned: string;
-  rate: string;
-  verified: boolean;
-  category: string;
-}[] = [
-  // Mock data removed as per user request
-];
+import { client } from "@/lib/sanity";
+import { urlFor } from "@/lib/sanity-image";
+import { Project } from "@/types";
+import { ContactModal } from "@/components/project/contact-modal";
 
 type Category = "projects" | "building" | "collabs" | "marketplace";
+
+const PROJECTS_QUERY = `*[_type == "project"] | order(_createdAt desc) {
+  _id,
+  title,
+  slug,
+  description,
+  category,
+  mainImage,
+  verified,
+  technologies,
+  cta
+}`;
 
 function ProjectsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const initialTab = searchParams.get("tab") as Category | null;
-  const [activeTab, setActiveTab] = React.useState<Category>("projects");
+  const [activeTab, setActiveTab] = useState<Category>("projects");
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const data = await client.fetch(PROJECTS_QUERY);
+        setProjects(data);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProjects();
+  }, []);
+
+  useEffect(() => {
     if (
       initialTab &&
       ["projects", "building", "collabs", "marketplace"].includes(initialTab)
@@ -48,10 +76,15 @@ function ProjectsContent() {
     router.push(`/projects?tab=${tab}`, { scroll: false });
   };
 
+  const handleContact = (project: Project) => {
+    setSelectedProject(project);
+    setIsContactOpen(true);
+  };
+
   const filteredProjects =
     activeTab === "projects"
-      ? PROJECTS_MOCK
-      : PROJECTS_MOCK.filter((p) => p.category === activeTab);
+      ? projects
+      : projects.filter((p) => p.category === activeTab);
 
   return (
     <div className="min-h-screen bg-transparent pb-32 pt-32">
@@ -71,7 +104,7 @@ function ProjectsContent() {
                 Projects Built:
               </span>
               <span className="text-xs font-black text-accent-lime font-mono">
-                {PROJECTS_MOCK.length.toString().padStart(2, "0")}
+                {projects.length.toString().padStart(2, "0")}
               </span>
             </div>
 
@@ -120,33 +153,38 @@ function ProjectsContent() {
 
           {/* Projects Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[400px]">
-            {filteredProjects.length > 0 ? (
-              filteredProjects.map((project, index) => (
+            {loading ? (
+              // Loading Skeleton
+              Array.from({ length: 3 }).map((_, i) => (
                 <div
-                  key={project.id}
-                  className="group relative bg-bg-glass backdrop-blur-md rounded-3xl border border-border-subtle overflow-hidden hover:border-accent-lime/50 transition-all duration-500"
+                  key={i}
+                  className="bg-bg-glass/30 animate-pulse rounded-none h-96 border border-border-subtle"
+                />
+              ))
+            ) : filteredProjects.length > 0 ? (
+              filteredProjects.map((project) => (
+                <div
+                  key={project._id}
+                  className="group relative bg-bg-glass backdrop-blur-md rounded-none overflow-hidden transition-all duration-500 hover:bg-bg-glass/40 shadow-xl"
                 >
                   {/* Card Image area */}
-                  <div className="relative aspect-video w-full overflow-hidden border-b border-border-subtle">
+                  <div className="relative aspect-video w-full overflow-hidden">
                     <div className="absolute inset-0 bg-accent-lime/10 group-hover:bg-transparent transition-colors z-10 mix-blend-overlay" />
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      fill
-                      className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute top-4 right-4 z-20">
-                      <div className="bg-black/50 backdrop-blur-md border border-white/10 p-2 rounded-full text-white">
-                        <Bookmark className="w-4 h-4" />
-                      </div>
-                    </div>
+                    {project.mainImage && (
+                      <Image
+                        src={urlFor(project.mainImage).url()}
+                        alt={project.title}
+                        fill
+                        className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+                      />
+                    )}
                   </div>
 
                   {/* Content */}
                   <div className="p-8 space-y-6">
-                    <div className="space-y-2">
+                    <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-2xl font-black text-white tracking-tighter uppercase group-hover:text-accent-lime transition-colors">
+                        <h3 className="text-2xl font-black text-accent-lime tracking-tighter uppercase transition-colors">
                           {project.title}
                         </h3>
                         {project.verified && (
@@ -156,40 +194,52 @@ function ProjectsContent() {
                       <p className="text-sm text-text-secondary leading-relaxed line-clamp-3">
                         {project.description}
                       </p>
-                    </div>
 
-                    {/* Metadata Grid */}
-                    <div className="grid grid-cols-3 gap-4 py-4 border-y border-border-subtle">
-                      <div className="text-center space-y-1 border-r border-border-subtle last:border-0">
-                        <div className="text-xs font-black text-accent-lime flex items-center justify-center gap-1">
-                          <Star className="w-3 h-3 fill-current" />{" "}
-                          {project.rating}
-                        </div>
-                        <div className="text-[9px] uppercase tracking-widest text-text-muted">
-                          RATING
-                        </div>
-                      </div>
-                      <div className="text-center space-y-1 border-r border-border-subtle last:border-0">
-                        <div className="text-xs font-black text-white">
-                          {project.earned}
-                        </div>
-                        <div className="text-[9px] uppercase tracking-widest text-text-muted">
-                          EARNED
-                        </div>
-                      </div>
-                      <div className="text-center space-y-1">
-                        <div className="text-xs font-black text-white">
-                          {project.rate}
-                        </div>
-                        <div className="text-[9px] uppercase tracking-widest text-text-muted">
-                          RATE
-                        </div>
+                      {/* Tech Stack Tags */}
+                      <div className="flex flex-wrap gap-2">
+                        {project.technologies?.slice(0, 3).map((tech) => (
+                          <span
+                            key={tech}
+                            className="text-[10px] uppercase tracking-widest text-text-muted border border-border-subtle px-2 py-1 rounded"
+                          >
+                            {tech}
+                          </span>
+                        ))}
                       </div>
                     </div>
 
-                    <Button className="w-full rounded-xl bg-accent-lime text-black font-black uppercase tracking-widest hover:bg-white transition-colors h-12">
-                      <Mail className="w-4 h-4 mr-2" /> Connect
-                    </Button>
+                    <div className="pt-6 border-t border-border-subtle flex items-center justify-between">
+                      <Link href={`/projects/${project.slug.current}`}>
+                        <Button
+                          variant="ghost"
+                          className="p-0 h-auto text-xs font-black uppercase tracking-[0.2em] text-white hover:text-accent-lime transition-all flex items-center gap-2 group/btn"
+                        >
+                          View Project
+                          <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
+                        </Button>
+                      </Link>
+
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="p-2 rounded-lg bg-accent-lime/10 border border-accent-lime/20 text-accent-lime"
+                          title="Source Code"
+                        >
+                          <Github className="w-3.5 h-3.5" />
+                        </div>
+                        <div
+                          className="p-2 rounded-lg bg-accent-lime/10 border border-accent-lime/20 text-accent-lime"
+                          title="Live Preview"
+                        >
+                          <Globe className="w-3.5 h-3.5" />
+                        </div>
+                        <div
+                          className="p-2 rounded-lg bg-accent-lime/10 border border-accent-lime/20 text-accent-lime"
+                          title="Contact"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))
@@ -209,6 +259,12 @@ function ProjectsContent() {
           </div>
         </div>
       </SectionReveal>
+
+      <ContactModal
+        isOpen={isContactOpen}
+        onClose={() => setIsContactOpen(false)}
+        cta={selectedProject?.cta}
+      />
     </div>
   );
 }
