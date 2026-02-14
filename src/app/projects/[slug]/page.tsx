@@ -12,6 +12,8 @@ import {
   Globe,
   CheckCircle2,
   Send,
+  Users,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { client } from "@/lib/sanity";
@@ -26,14 +28,16 @@ const PROJECT_QUERY = `*[_type == "project" && slug.current == $slug][0] {
   title,
   description,
   category,
+  teamSize,
+  roles,
   mainImage,
   gallery,
   technologies {
-    "languages": languages[]->name,
-    "frontend": frontend[]->name,
-    "backend": backend[]->name,
-    "database": database[]->name,
-    "tools": tools[]->name
+    "languages": languages[]->{name, "image": image.asset->url},
+    "frontend": frontend[]->{name, "image": image.asset->url},
+    "backend": backend[]->{name, "image": image.asset->url},
+    "database": database[]->{name, "image": image.asset->url},
+    "tools": tools[]->{name, "image": image.asset->url}
   },
   liveUrl,
   githubUrl,
@@ -183,6 +187,48 @@ function ProjectDetailsContent() {
               </Link>
             </div>
 
+            {/* Team Collaboration Info - Only for Collab Projects */}
+            {project.category?.includes("collabs") &&
+              (project.teamSize || project.roles) && (
+                <div className="space-y-6">
+                  {/* Lime Separator Line */}
+                  <div className="w-full h-0.5 bg-accent-lime" />
+
+                  {/* Team Info Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Team Size */}
+                    {project.teamSize && (
+                      <div className="flex items-center gap-3">
+                        <Users className="w-5 h-5 text-accent-lime flex-shrink-0" />
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-black uppercase tracking-widest text-text-muted">
+                            Team:
+                          </span>
+                          <span className="text-lg font-black text-white">
+                            {project.teamSize}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Roles */}
+                    {project.roles && project.roles.length > 0 && (
+                      <div className="flex items-center gap-3">
+                        <User className="w-5 h-5 text-accent-lime flex-shrink-0" />
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-black uppercase tracking-widest text-text-muted">
+                            Role{project.roles.length > 1 ? "s" : ""}:
+                          </span>
+                          <span className="text-lg font-black text-white">
+                            {project.roles.join(", ")}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
             {/* Tech Stack */}
             <div className="space-y-6">
               <h3 className="text-xs font-black uppercase tracking-[0.3em] text-text-muted">
@@ -205,12 +251,24 @@ function ProjectDetailsContent() {
                         </span>
                         <div className="flex flex-wrap gap-2">
                           {category.data.map((tech) => (
-                            <span
-                              key={tech}
-                              className="px-3 py-1.5 bg-bg-glass border border-border-subtle rounded-lg text-xs font-bold text-white uppercase tracking-widest"
+                            <div
+                              key={tech.name}
+                              className="px-3 py-1.5 bg-bg-glass border border-border-subtle rounded-lg flex items-center gap-2"
                             >
-                              {tech}
-                            </span>
+                              {tech.image && (
+                                <div className="relative w-4 h-4">
+                                  <Image
+                                    src={tech.image}
+                                    alt={tech.name}
+                                    fill
+                                    className="object-contain"
+                                  />
+                                </div>
+                              )}
+                              <span className="text-xs font-bold text-white uppercase tracking-widest">
+                                {tech.name}
+                              </span>
+                            </div>
                           ))}
                         </div>
                       </div>
@@ -300,7 +358,6 @@ function ProjectDetailsContent() {
       <ContactModal
         isOpen={isContactOpen}
         onClose={() => setIsContactOpen(false)}
-        cta={project.cta}
       />
     </div>
   );

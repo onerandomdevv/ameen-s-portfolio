@@ -1,3 +1,10 @@
+import { SanityProject, SanitySlug, SanityImage, SanityTechnologies } from './sanity';
+
+// Re-export Sanity types for convenience
+export type { SanityProject, SanitySlug, SanityImage, SanityTechnologies };
+
+// Legacy Project type - kept for backward compatibility
+// Consider migrating to SanityProject directly
 export interface Project {
   _id: string;
   title: string;
@@ -5,24 +12,21 @@ export interface Project {
     current: string;
   };
   description: string;
-  category: "projects" | "building" | "collabs" | "marketplace";
+  category: ("projects" | "building" | "collabs" | "marketplace")[];
+  teamSize?: number;
+  roles?: string[];
   mainImage: any;
   gallery?: any[];
   technologies: {
-    languages: string[];
-    frontend: string[];
-    backend: string[];
-    database: string[];
-    tools: string[];
+    languages: { name: string; image?: string }[];
+    frontend: { name: string; image?: string }[];
+    backend: { name: string; image?: string }[];
+    database: { name: string; image?: string }[];
+    tools: { name: string; image?: string }[];
   };
   liveUrl?: string;
   githubUrl?: string;
   verified: boolean;
-  cta?: {
-    telegram?: string;
-    whatsapp?: string;
-    email?: string;
-  };
   content?: any[];
 }
 

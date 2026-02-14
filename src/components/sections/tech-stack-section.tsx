@@ -3,9 +3,9 @@ import Image from "next/image";
 import { SectionReveal } from "@/components/ui/section-reveal";
 
 const LANGUAGES_DATA = [
-  { name: "JavaScript", logo: "/tech/languages/javascript.png" },
-  { name: "TypeScript", logo: "/tech/languages/typescript.svg" },
-  { name: "Python", logo: "/tech/languages/python.png" },
+  { name: "JavaScript", logo: "/tech/languages/javascript.png", mastery: 97 },
+  { name: "TypeScript", logo: "/tech/languages/typescript.svg", mastery: 90 },
+  { name: "Python", logo: "/tech/languages/python.png", mastery: 35 },
 ];
 
 const TECH_STACK_DATA = [
@@ -14,7 +14,6 @@ const TECH_STACK_DATA = [
     contents: [
       { name: "React", logo: "/tech/frontend/react.svg" },
       { name: "Next.js", logo: "/tech/frontend/nextjs.png" },
-      { name: "Redux", logo: "/tech/frontend/redux.png" },
       { name: "Tailwind CSS", logo: "/tech/frontend/tailwind.svg" },
       { name: "Framer Motion", logo: "/tech/frontend/framer.png" },
       { name: "Bootstrap", logo: "/tech/frontend/bootstrap.svg" },
@@ -41,10 +40,9 @@ const TECH_STACK_DATA = [
     title: "Tools",
     contents: [
       { name: "Git", logo: "/tech/tools/git.svg" },
-      { name: "AWS", logo: "/tech/tools/aws.svg" },
       { name: "Vercel", logo: "/tech/tools/vercel.png" },
       { name: "Render", logo: "/tech/tools/render.png" },
-      { name: "OpenAI GPT", logo: "/tech/tools/chatgpt.svg" },
+      { name: "OpenAI Codex", logo: "/tech/tools/codex.png" },
       { name: "Claude", logo: "/tech/tools/claude.svg" },
       { name: "Gemini", logo: "/tech/tools/gemini.svg" },
     ],
@@ -82,9 +80,27 @@ export function TechStackSection() {
                     className="object-contain drop-shadow-lg"
                   />
                 </div>
-                <h4 className="text-lg font-black uppercase tracking-widest text-zinc-400 group-hover:text-accent-lime transition-colors">
-                  {lang.name}
-                </h4>
+                <div className="w-full space-y-3">
+                  <h4 className="text-lg font-black uppercase tracking-widest text-zinc-400 group-hover:text-accent-lime transition-colors text-center">
+                    {lang.name}
+                  </h4>
+
+                  {/* Progress Bar */}
+                  <div className="w-full space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-text-muted font-mono">Mastery</span>
+                      <span className="text-accent-lime font-black font-mono">
+                        {lang.mastery}%
+                      </span>
+                    </div>
+                    <div className="w-full h-1.5 bg-bg-glass rounded-full overflow-hidden border border-border-subtle">
+                      <div
+                        className="h-full bg-gradient-to-r from-accent-lime to-accent-lime/60 transition-all duration-1000 ease-out"
+                        style={{ width: `${lang.mastery}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
 
                 {/* Decorative Elements */}
                 <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-border-highlight group-hover:bg-accent-lime transition-colors" />

@@ -30,17 +30,39 @@ export default defineType({
     defineField({
       name: 'category',
       title: 'Category',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Projects', value: 'projects' },
-          { title: 'Building', value: 'building' },
-          { title: 'Collabs', value: 'collabs' },
-          { title: 'Marketplace', value: 'marketplace' },
-        ],
-      },
-      initialValue: 'projects',
-      validation: (Rule) => Rule.required(),
+      type: 'array',
+      of: [
+        {
+          type: 'string',
+          options: {
+            list: [
+              { title: 'Projects', value: 'projects' },
+              { title: 'Building', value: 'building' },
+              { title: 'Collabs', value: 'collabs' },
+              { title: 'Marketplace', value: 'marketplace' },
+            ],
+          },
+        },
+      ],
+      validation: (Rule) => Rule.required().max(2).min(1),
+      description: 'Select up to 2 categories for this project',
+    }),
+    defineField({
+      name: 'teamSize',
+      title: 'Team Size',
+      type: 'number',
+      description: 'Number of people who collaborated on this project',
+      validation: (Rule) => Rule.min(2).max(100),
+      hidden: ({ document }) => !(document?.category as string[])?.includes('collabs'),
+    }),
+    defineField({
+      name: 'roles',
+      title: 'Your Role(s)',
+      type: 'array',
+      of: [{ type: 'string' }],
+      description: 'Your role(s) in this collaboration (max 3)',
+      validation: (Rule) => Rule.max(3),
+      hidden: ({ document }) => !(document?.category as string[])?.includes('collabs'),
     }),
     defineField({
       name: 'mainImage',
@@ -145,31 +167,6 @@ export default defineType({
       name: 'githubUrl',
       title: 'GitHub URL',
       type: 'url',
-    }),
-    defineField({
-      name: 'cta',
-      title: 'Contact Dev Options',
-      type: 'object',
-      fields: [
-        defineField({
-          name: 'telegram',
-          title: 'Telegram URL',
-          type: 'url',
-          description: 'Link to your Telegram DM',
-        }),
-        defineField({
-          name: 'whatsapp',
-          title: 'WhatsApp URL',
-          type: 'url',
-          description: 'Link to your WhatsApp chat',
-        }),
-        defineField({
-          name: 'email',
-          title: 'Direct Email',
-          type: 'string',
-          description: 'Your contact email address',
-        }),
-      ],
     }),
     defineField({
       name: 'content',

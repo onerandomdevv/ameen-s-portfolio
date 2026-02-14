@@ -12,19 +12,6 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'level',
-      title: 'Level',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Beginner', value: 'Beginner' },
-          { title: 'Intermediate', value: 'Intermediate' },
-          { title: 'Advanced', value: 'Advanced' },
-        ],
-      },
-      initialValue: 'Intermediate',
-    }),
-    defineField({
       name: 'category',
       title: 'Category',
       type: 'string',
@@ -38,6 +25,14 @@ export default defineType({
         ],
       },
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'image',
+      title: 'Icon/Logo',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
     }),
   ],
 })
