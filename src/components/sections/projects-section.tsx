@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRightCircle, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { SectionReveal } from "@/components/ui/section-reveal";
 import { Magnetic } from "@/components/ui/magnetic";
@@ -108,12 +109,10 @@ export function ProjectsSection() {
                       {/* Bottom Action Bar */}
                       <div className="flex items-center justify-between pt-8 border-t border-border-subtle">
                         <Link href={`/projects/${project.slug.current}`}>
-                          <Magnetic>
-                            <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-text-primary hover:text-accent-lime transition-colors group/link cursor-pointer">
-                              View Project
-                              <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                            </div>
-                          </Magnetic>
+                          <Button className="rounded-xl bg-accent-lime text-black font-black uppercase tracking-widest hover:bg-white transition-all h-10 px-4 flex items-center gap-2 group/btn">
+                            View Project
+                            <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
+                          </Button>
                         </Link>
                       </div>
                     </div>
